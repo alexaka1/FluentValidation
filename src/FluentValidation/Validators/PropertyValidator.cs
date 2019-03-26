@@ -1,18 +1,18 @@
 #region License
 // Copyright (c) Jeremy Skinner (http://www.jeremyskinner.co.uk)
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
+// 
+// Licensed under the Apache License, Version 2.0 (the "License"); 
+// you may not use this file except in compliance with the License. 
+// You may obtain a copy of the License at 
+// 
+// http://www.apache.org/licenses/LICENSE-2.0 
+// 
+// Unless required by applicable law or agreed to in writing, software 
+// distributed under the License is distributed on an "AS IS" BASIS, 
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+// See the License for the specific language governing permissions and 
 // limitations under the License.
-//
+// 
 // The latest version of this file can be found at https://github.com/jeremyskinner/FluentValidation
 #endregion
 
@@ -33,18 +33,10 @@ namespace FluentValidation.Validators {
 
 		protected PropertyValidator(IStringSource errorMessageSource) {
 			if(errorMessageSource == null) errorMessageSource = new StaticStringSource("No default error message has been specified.");
-			else if (errorMessageSource is LanguageStringSource l && l.ErrorCodeFunc == null)
+			else if (errorMessageSource is LanguageStringSource l && l.ErrorCodeFunc == null) 
 				l.ErrorCodeFunc = ctx => Options.ErrorCodeSource?.GetString(ctx);
-
+			
 			Options.ErrorMessageSource = errorMessageSource;
-		}
-
-		[Obsolete("This constructor will be removed in FluentValidation 9.0. Use the overload that takes an IStringSource instead, passing in a LazyStringSource: PropertyValidator(new LazyStringSource(ctx => MyResourceClass.MyResourceName))")]
-		protected PropertyValidator(string errorMessageResourceName, Type errorMessageResourceType) {
-			errorMessageResourceName.Guard("errorMessageResourceName must be specified.", nameof(errorMessageResourceName));
-			errorMessageResourceType.Guard("errorMessageResourceType must be specified.", nameof(errorMessageResourceType));
-
-			Options.ErrorMessageSource = new LocalizedStringSource(errorMessageResourceType, errorMessageResourceName);
 		}
 
 		protected PropertyValidator(string errorMessage) {
@@ -54,7 +46,7 @@ namespace FluentValidation.Validators {
 		public virtual IEnumerable<ValidationFailure> Validate(PropertyValidatorContext context) {
 			if (Options.Condition != null && !Options.Condition(context)) return Enumerable.Empty<ValidationFailure>();
 			if (IsValid(context)) return Enumerable.Empty<ValidationFailure>();
-
+			
 			PrepareMessageFormatterForValidationError(context);
 			return new[] { CreateValidationError(context) };
 
@@ -64,7 +56,7 @@ namespace FluentValidation.Validators {
 			if (Options.Condition != null && !Options.Condition(context)) return Enumerable.Empty<ValidationFailure>();
 			if (Options.AsyncCondition != null && !await Options.AsyncCondition(context, cancellation)) return Enumerable.Empty<ValidationFailure>();
 			if (await IsValidAsync(context, cancellation)) return Enumerable.Empty<ValidationFailure>();
-
+			
 			PrepareMessageFormatterForValidationError(context);
 			return new[] {CreateValidationError(context)};
 		}
@@ -101,14 +93,13 @@ namespace FluentValidation.Validators {
 		protected virtual ValidationFailure CreateValidationError(PropertyValidatorContext context) {
 			var messageBuilderContext = new MessageBuilderContext(context, Options.ErrorMessageSource, this);
 
-			var error = context.Rule.MessageBuilder != null
-				? context.Rule.MessageBuilder(messageBuilderContext)
+			var error = context.Rule.MessageBuilder != null 
+				? context.Rule.MessageBuilder(messageBuilderContext) 
 				: messageBuilderContext.GetDefaultMessage();
 
 			var failure = new ValidationFailure(context.PropertyName, error, context.PropertyValue);
 			failure.FormattedMessageArguments = context.MessageFormatter.AdditionalArguments;
 			failure.FormattedMessagePlaceholderValues = context.MessageFormatter.PlaceholderValues;
-			failure.ResourceName = Options.ErrorMessageSource.ResourceName;
 			failure.ErrorCode = (Options.ErrorCodeSource != null)
 				? Options.ErrorCodeSource.GetString(context)
 				: ValidatorOptions.ErrorCodeResolver(this);
