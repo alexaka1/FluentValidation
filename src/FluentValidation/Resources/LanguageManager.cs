@@ -78,6 +78,7 @@ namespace FluentValidation.Resources {
 				SwedishLanguage.Culture => new SwedishLanguage(),
 				TurkishLanguage.Culture => new TurkishLanguage(),
 				UkrainianLanguage.Culture => new UkrainianLanguage(),
+				WelshLanguage.Culture => new WelshLanguage(),
 				_=> (Language)null,
 			};
 		}
