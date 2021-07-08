@@ -2,6 +2,8 @@
 
 [Full Documentation](https://fluentvalidation.net)
 
+### This repo is not maintained. It was used to contribute to the original repository.
+
 A small validation library for .NET that uses a fluent interface
 and lambda expressions for building validation rules.
 
